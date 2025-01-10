@@ -1,0 +1,363 @@
+<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
+<jasperReport name="StudentPerformanceReport" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="33aa483c-3183-4f7c-a54a-bb3b4c6ac78a">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MySQL_SchoolManagementSystemDB"/>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<dataset name="Dataset1" uuid="5342d601-bd96-4b8e-a094-5bf99d25d9e7">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MySQL_SchoolManagementSystemDB"/>
+		<query language="SQL"><![CDATA[
+
+SELECT
+    CONCAT(c.class_name_number, '-', c.class_name_letter) AS class_name,
+    s.subject_name,
+    CONCAT(t.fname, ' ', t.lname) AS teacher_name,
+
+    -- Average results for Term 1
+    ROUND(
+        (SELECT AVG(r.result)
+         FROM Results r
+         WHERE r.class_name_number = c.class_name_number
+           AND r.subject_id = s.subject_id  
+           AND r.term_name = 'Term 1'), 2) AS average_term1,
+
+    -- Average results for Term 2
+    ROUND(
+        (SELECT AVG(r.result)
+         FROM Results r
+         WHERE r.class_name_number = c.class_name_number
+           AND r.subject_id = s.subject_id  
+           AND r.term_name = 'Term 2'), 2) AS average_term2,
+
+    -- Average results for Term 3
+    ROUND(
+        (SELECT AVG(r.result)
+         FROM Results r
+         WHERE r.class_name_number = c.class_name_number
+           AND r.subject_id = s.subject_id  
+           AND r.term_name = 'Term 3'), 2) AS average_term3,
+
+    -- Maximum and minimum scores
+    MAX(r.result) AS max_score,
+    MIN(r.result) AS min_score
+
+FROM
+    Classes c
+JOIN
+    TeacherSubject ts ON c.classteacher_id = ts.teacher_id
+JOIN
+    Subjects s ON ts.subject_id = s.subject_id
+JOIN
+    Teachers t ON ts.teacher_id = t.teacher_id
+JOIN
+    Results r ON c.class_name_number = r.class_name_number AND r.subject_id = s.subject_id
+
+GROUP BY
+    c.class_name_number, c.class_name_letter, s.subject_id, t.teacher_id, s.subject_name, t.fname, t.lname
+
+ORDER BY
+    class_name, s.subject_name
+LIMIT 1000;
+]]></query>
+		<field name="class_name" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="class_name"/>
+			<property name="com.jaspersoft.studio.field.label" value="class_name"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="classes"/>
+		</field>
+		<field name="subject_name" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="subject_name"/>
+			<property name="com.jaspersoft.studio.field.label" value="subject_name"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="subjects"/>
+		</field>
+		<field name="teacher_name" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="name"/>
+			<property name="com.jaspersoft.studio.field.label" value="teacher_name"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="teachers"/>
+		</field>
+		<field name="average_term1" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="average_term1"/>
+			<property name="com.jaspersoft.studio.field.label" value="average_term1"/>
+		</field>
+		<field name="average_term2" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="average_term2"/>
+			<property name="com.jaspersoft.studio.field.label" value="average_term2"/>
+		</field>
+		<field name="average_term3" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="average_term3"/>
+			<property name="com.jaspersoft.studio.field.label" value="average_term3"/>
+		</field>
+		<field name="max_score" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.name" value="max_score"/>
+			<property name="com.jaspersoft.studio.field.label" value="max_score"/>
+		</field>
+		<field name="min_score" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.name" value="min_score"/>
+			<property name="com.jaspersoft.studio.field.label" value="min_score"/>
+		</field>
+	</dataset>
+	<query language="SQL"><![CDATA[SELECT
+    CONCAT(c.class_name_number, '-', c.class_name_letter) AS class_name,
+    s.subject_name,
+    CONCAT(t.fname, ' ', t.lname) AS teacher_name,
+
+    -- Average results for Term 1
+    ROUND(
+        (SELECT AVG(r.result)
+         FROM Results r
+         WHERE r.class_name_number = c.class_name_number
+           AND r.subject_id = s.subject_id  
+           AND r.term_name = 'Term 1'), 2) AS average_term1,
+
+    -- Average results for Term 2
+    ROUND(
+        (SELECT AVG(r.result)
+         FROM Results r
+         WHERE r.class_name_number = c.class_name_number
+           AND r.subject_id = s.subject_id  
+           AND r.term_name = 'Term 2'), 2) AS average_term2,
+
+    -- Average results for Term 3
+    ROUND(
+        (SELECT AVG(r.result)
+         FROM Results r
+         WHERE r.class_name_number = c.class_name_number
+           AND r.subject_id = s.subject_id  
+           AND r.term_name = 'Term 3'), 2) AS average_term3,
+
+    -- Maximum and minimum scores
+    MAX(r.result) AS max_score,
+    MIN(r.result) AS min_score
+
+FROM
+    Classes c
+JOIN
+    TeacherSubject ts ON c.classteacher_id = ts.teacher_id
+JOIN
+    Subjects s ON ts.subject_id = s.subject_id
+JOIN
+    Teachers t ON ts.teacher_id = t.teacher_id
+JOIN
+    Results r ON c.class_name_number = r.class_name_number AND r.subject_id = s.subject_id
+
+GROUP BY
+    c.class_name_number, c.class_name_letter, s.subject_id, t.teacher_id, s.subject_name, t.fname, t.lname
+
+ORDER BY
+    class_name, s.subject_name
+LIMIT 1000;
+
+]]></query>
+	<field name="class_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="class_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="class_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="classes"/>
+	</field>
+	<field name="subject_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="subject_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="subject_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="subjects"/>
+	</field>
+	<field name="teacher_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="teacher_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="teachers"/>
+	</field>
+	<field name="average_term1" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="average_term1"/>
+		<property name="com.jaspersoft.studio.field.label" value="average_term1"/>
+	</field>
+	<field name="average_term2" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="average_term2"/>
+		<property name="com.jaspersoft.studio.field.label" value="average_term2"/>
+	</field>
+	<field name="average_term3" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="average_term3"/>
+		<property name="com.jaspersoft.studio.field.label" value="average_term3"/>
+	</field>
+	<field name="max_score" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="max_score"/>
+		<property name="com.jaspersoft.studio.field.label" value="max_score"/>
+	</field>
+	<field name="min_score" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="min_score"/>
+		<property name="com.jaspersoft.studio.field.label" value="min_score"/>
+	</field>
+	<background splitType="Stretch"/>
+	<title height="79" splitType="Stretch">
+		<element kind="staticText" uuid="468bf3c9-5bf5-48c8-86a9-7429acfa321f" x="172" y="30" width="210" height="30" fontName="Times New Roman" fontSize="20.0" bold="true">
+			<text><![CDATA[Class Evaluation Report]]></text>
+		</element>
+	</title>
+	<pageHeader height="49" splitType="Stretch">
+		<element kind="textField" uuid="6e0d0e30-63ea-4762-8f82-3115f3030e0e" x="50" y="10" width="141" height="30" fontSize="14.0" pattern="MMMMM dd, yyyy">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+		<element kind="staticText" uuid="96cff2ba-9ea8-4d4a-a759-c47d1a5b5e7b" x="10" y="10" width="100" height="30" fontSize="14.0">
+			<text><![CDATA[Date:]]></text>
+		</element>
+		<element kind="staticText" uuid="8a9db92f-0575-4b52-9fd9-726d6c9c860d" x="360" y="10" width="100" height="30" fontSize="14.0">
+			<text><![CDATA[Time:]]></text>
+		</element>
+		<element kind="textField" uuid="2dac1e66-c955-446e-a525-6c80c685ed97" x="400" y="10" width="131" height="30" fontSize="14.0" pattern="HH:mm">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+	</pageHeader>
+	<columnHeader height="370" splitType="Stretch">
+		<element kind="component" uuid="0e971786-6beb-4dbe-89f5-bcc29457af8d" x="-8" y="0" width="571" height="340">
+			<component kind="table">
+				<datasetRun uuid="edf5e29a-0f0b-4478-9df7-30efdd0ec7be" subDataset="Dataset1">
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				</datasetRun>
+				<column kind="single" uuid="f3b729b7-0e8b-43b4-937e-d0af2ba5508e" width="72">
+					<tableHeader height="30"/>
+					<tableFooter height="30"/>
+					<columnHeader height="30" style="Table_CH">
+						<element kind="staticText" uuid="377a3e38-df91-47dd-b31c-089c15ced610" x="0" y="0" width="72" height="30">
+							<text><![CDATA[class_name]]></text>
+						</element>
+					</columnHeader>
+					<columnFooter height="30" style="Table_CH"/>
+					<detailCell height="30" style="Table_TD">
+						<element kind="textField" uuid="1102dbd3-ce99-407a-b9ed-4f3eab9e207d" x="0" y="0" width="72" height="30">
+							<expression><![CDATA[$F{class_name}]]></expression>
+						</element>
+					</detailCell>
+				</column>
+				<column kind="single" uuid="2d3eca85-bcbb-43a0-b4ca-2318afffb6ce" width="72">
+					<tableHeader height="30"/>
+					<tableFooter height="30"/>
+					<columnHeader height="30" style="Table_CH">
+						<element kind="staticText" uuid="070c675d-cf62-4aef-8ae0-52a8fab51adc" x="0" y="0" width="72" height="30">
+							<text><![CDATA[subject_name]]></text>
+						</element>
+					</columnHeader>
+					<columnFooter height="30" style="Table_CH"/>
+					<detailCell height="30" style="Table_TD">
+						<element kind="textField" uuid="42103ea2-4063-4cbe-a7e8-d1fb23096d38" x="0" y="0" width="72" height="30">
+							<expression><![CDATA[$F{subject_name}]]></expression>
+						</element>
+					</detailCell>
+				</column>
+				<column kind="single" uuid="a6afdbac-4f0c-481f-b4bf-8ebaab13ef4b" width="72">
+					<tableHeader height="30"/>
+					<tableFooter height="30"/>
+					<columnHeader height="30" style="Table_CH">
+						<element kind="staticText" uuid="c4122ee9-7ef8-4549-84df-e9f3d211f65c" x="0" y="0" width="72" height="30">
+							<text><![CDATA[teacher_name]]></text>
+						</element>
+					</columnHeader>
+					<columnFooter height="30" style="Table_CH"/>
+					<detailCell height="30" style="Table_TD">
+						<element kind="textField" uuid="1df959cc-14f2-45e0-a749-6ae2b0dc47c6" x="0" y="0" width="72" height="30">
+							<expression><![CDATA[$F{teacher_name}]]></expression>
+						</element>
+					</detailCell>
+				</column>
+				<column kind="single" uuid="a46a4d73-682f-4dc4-8735-2b9a950eeb39" width="71">
+					<tableHeader height="30"/>
+					<tableFooter height="30"/>
+					<columnHeader height="30" style="Table_CH">
+						<element kind="staticText" uuid="58ab6b29-5dff-448b-b58b-049e83413fd9" x="0" y="0" width="71" height="30">
+							<text><![CDATA[average_term1]]></text>
+						</element>
+					</columnHeader>
+					<columnFooter height="30" style="Table_CH"/>
+					<detailCell height="30" style="Table_TD">
+						<element kind="textField" uuid="dfb83220-d4d0-4015-a530-ca1780baf7c9" x="0" y="0" width="71" height="30">
+							<expression><![CDATA[$F{average_term1}]]></expression>
+						</element>
+					</detailCell>
+				</column>
+				<column kind="single" uuid="271e72a7-816a-4a09-9315-658ed7025767" width="71">
+					<tableHeader height="30"/>
+					<tableFooter height="30"/>
+					<columnHeader height="30" style="Table_CH">
+						<element kind="staticText" uuid="b85d5ff7-00bc-4e9b-a34a-a88c3d63e307" x="0" y="0" width="71" height="30">
+							<text><![CDATA[average_term2]]></text>
+						</element>
+					</columnHeader>
+					<columnFooter height="30" style="Table_CH"/>
+					<detailCell height="30" style="Table_TD">
+						<element kind="textField" uuid="5f0db52a-1210-4955-9514-fb0369f78073" x="0" y="0" width="71" height="30">
+							<expression><![CDATA[$F{average_term2}]]></expression>
+						</element>
+					</detailCell>
+				</column>
+				<column kind="single" uuid="9f804a80-6b46-4b95-80e0-cfaa1394a6e0" width="71">
+					<tableHeader height="30"/>
+					<tableFooter height="30"/>
+					<columnHeader height="30" style="Table_CH">
+						<element kind="staticText" uuid="1cab4bbf-bae5-420d-af7c-0e86f2b0dd54" x="0" y="0" width="71" height="30">
+							<text><![CDATA[average_term3]]></text>
+						</element>
+					</columnHeader>
+					<columnFooter height="30" style="Table_CH"/>
+					<detailCell height="30" style="Table_TD">
+						<element kind="textField" uuid="92f27e59-1c2c-4963-9698-457acf27b0ea" x="0" y="0" width="71" height="30">
+							<expression><![CDATA[$F{average_term3}]]></expression>
+						</element>
+					</detailCell>
+				</column>
+				<column kind="single" uuid="036dba07-0198-444b-89ce-46504f7a1029" width="71">
+					<tableHeader height="30"/>
+					<tableFooter height="30"/>
+					<columnHeader height="30" style="Table_CH">
+						<element kind="staticText" uuid="f9c70d2c-d649-46e8-aa8c-dcfceee642bc" x="0" y="0" width="71" height="30">
+							<text><![CDATA[max_score]]></text>
+						</element>
+					</columnHeader>
+					<columnFooter height="30" style="Table_CH"/>
+					<detailCell height="30" style="Table_TD">
+						<element kind="textField" uuid="fed648bf-be8a-488b-bb3a-53508226afd7" x="0" y="0" width="71" height="30">
+							<expression><![CDATA[$F{max_score}]]></expression>
+						</element>
+					</detailCell>
+				</column>
+				<column kind="single" uuid="319249b5-3bf0-4d55-bc7e-47abdfa95b4f" width="71">
+					<tableHeader height="30"/>
+					<tableFooter height="30"/>
+					<columnHeader height="30" style="Table_CH">
+						<element kind="staticText" uuid="0e24b7ca-e8e1-40c1-8ca5-e5d49453ac4c" x="0" y="0" width="71" height="30">
+							<text><![CDATA[min_score]]></text>
+						</element>
+					</columnHeader>
+					<columnFooter height="30" style="Table_CH"/>
+					<detailCell height="30" style="Table_TD">
+						<element kind="textField" uuid="af4921fd-bdf2-4263-8754-2567cc64365e" x="0" y="0" width="71" height="30">
+							<expression><![CDATA[$F{min_score}]]></expression>
+						</element>
+					</detailCell>
+				</column>
+			</component>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+			<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+			<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+			<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+			<property name="com.jaspersoft.studio.components.autoresize.next" value="true"/>
+			<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="234" splitType="Stretch"/>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>
